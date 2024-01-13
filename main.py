@@ -178,7 +178,7 @@ with tab2:
     # Data for the bar chart
     data = {'Model': ['gpt-3.5-turbo-1106', 'gpt-4', 'gpt-4-32k', 'gpt-4-1106-preview'],
             'cost in $': [calculateEverythingForBarChart('gpt-3.5-turbo-1106', txt_input, txt_output), calculateEverythingForBarChart('gpt-4', txt_input, txt_output), calculateEverythingForBarChart('gpt-4-32k', txt_input, txt_output), calculateEverythingForBarChart('gpt-4-1106-preview', txt_input, txt_output)]}
-
+#asdf
     # Create a Streamlit app
  #   st.title("Total token cost by model bar chart")
 
