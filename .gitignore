@@ -127,6 +127,13 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+# added
+bin
+etc
+include
+lib
+share
+pyvenv.cfg
 
 # Spyder project settings
 .spyderproject

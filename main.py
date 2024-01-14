@@ -1,16 +1,6 @@
-# pip install streamlit <- webinterface
-# pip install tiktoken <- counting tokens
-# pip install openai <- accessing models
-
-# pip install streamlit-extras
-# https://www.buymeacoffee.com/doyouknowmarc
-
 import tiktoken
 import streamlit as st
 from streamlit_extras.buy_me_a_coffee import button
-#import plotly.express as px
-
-
 
 # vars
 modelInputCost = 0
@@ -104,7 +94,7 @@ st.set_page_config(
         initial_sidebar_state="expanded",
         menu_items={
             'Get Help': 'https://www.linkedin.com/in/doyouknowmarc/',
-            'Report a bug': "https://www.linkedin.com/in/doyouknowmarc/",
+            'Report a bug': "https://github.com/doyouknowmarc/tokencostcalculator/issues",
             'About': "# Token Cost Calculator \n This application helps you to calculate the token costs associated with using LLMs from [OpenAI](https://openai.com/). This fun little calculator was developed by [Marc](https://www.linkedin.com/in/doyouknowmarc/). The motivation for this application is based on the recurring question I get during my job: \"how much does tokens cost?\". Further I'm trying to earn my very first dollar online."
         }
     )
@@ -133,6 +123,7 @@ st.sidebar.container()
 with tab1:
     st.title("Token Cost Calculator 💸")
     st.markdown(f'<p>The costs per 1000 Tokens based on <span style="color: rgb(255, 75, 75)">{setModelCost(model_choice)}</span> are <span style="color: rgb(255, 75, 75)">${modelInputCost}</span> for Input and <span style="color: rgb(255, 75, 75)">${modelOutputCost}</span> for Output.</p>', unsafe_allow_html=True)
+    
     # columns
     col1, col2 = st.columns(2)
     with col1:
@@ -172,24 +163,6 @@ with tab1:
 
 with tab2:
     st.write("Welcome to advanced mode")
-    
-
-#with tab3:
-    # Data for the bar chart
-    data = {'Model': ['gpt-3.5-turbo-1106', 'gpt-4', 'gpt-4-32k', 'gpt-4-1106-preview'],
-            'cost in $': [calculateEverythingForBarChart('gpt-3.5-turbo-1106', txt_input, txt_output), calculateEverythingForBarChart('gpt-4', txt_input, txt_output), calculateEverythingForBarChart('gpt-4-32k', txt_input, txt_output), calculateEverythingForBarChart('gpt-4-1106-preview', txt_input, txt_output)]}
-#asdf
-    # Create a Streamlit app
- #   st.title("Total token cost by model bar chart")
-
-    # Create a bar chart using Plotly
-  #  fig = px.bar(data, x='Model', y='cost in $', text='cost in $', width=750, height=450, color=["green","blue","red","yellow"], color_discrete_sequence=["green","blue","red","yellow"], labels={'Category': 'Categories', 'Value': 'Values'})
-
-    # Customize the chart (optional)
-   # fig.update_layout(title="Total token cost by Model")
- #   fig.update_yaxes(tickprefix="$", showgrid=True)
-    # Display the chart in Streamlit
- #   st.plotly_chart(fig)
 
 
 # Day 1:
@@ -224,17 +197,17 @@ with tab2:
 
 # Day 5:
 # setup source control
+# setup ko-fi
 
+
+# Day 6:
+# added requirements.txt
+# code and comment clean up
 # add detail mode (show encoding and single costs + token and character amount)
 # add variance as a slider (%) for input and output - calculate if I have between -50% and + 200% more or less input / output
 # add information page about tokens (4 characters are one token etc.)
 # make it more relateable - add something like: for 100$ you could do X amount of calls
-
-
-# Day 6:
 # think about theming (color scheme)
-#
-#
 
 
 # Day 7
