@@ -71,6 +71,7 @@ def calculateInputCost(text_input):
     inputCost = num_input_tokens * modelInputCost / 1000
     return inputCost
 
+
 def calculateOutputCost(text_output):
     global encoding
     global modelOutputCost
@@ -82,16 +83,14 @@ def calculateOutputCost(text_output):
     outputCost = num_output_tokens * modelOutputCost / 1000
     return outputCost
 
-def calculateTotalCost(calculatedInput, calculatedOutput):
-    totalCost = calculatedInput + calculatedOutput
+def calculateTotalCost(calculatedPrompt, calculatedInput, calculatedOutput):
+    totalCost = calculatedPrompt + calculatedInput + calculatedOutput
     return totalCost
 
 def getEncoding(text):
     global encoding
     result = encoding.encode(text)
     return result
-
-
 
 st.set_page_config(
         page_title="Token Cost Calculator",
@@ -105,7 +104,7 @@ st.set_page_config(
         }
     )
 
-tab1, tab2 = st.tabs(["Basic", "Advanced"])
+tab1, tab2 = st.tabs(["Basic", "Info"])
 
 
 
@@ -121,8 +120,6 @@ st.sidebar.subheader("🤓 Detail Mode")
 st.sidebar.write("If you are interessted in the encodings, number of tokens, number of characters and individual costs activate the folowing:")
 detailMode = st.sidebar.checkbox('Show me more details 🤓')
 
-
-#st.sidebar.container()
 
 with st.sidebar.container():
     st.divider()
@@ -142,28 +139,58 @@ with tab1:
     # columns
     col1, col2 = st.columns(2)
     with col1:
+        st.subheader("Prompt")
+        txt_prompt = st.text_area(label ="What is the task? Enter the prompt (see example).", placeholder="Classify for Invoice, Contract, Certificate.\nReturn a JSON formated result containing a key called \"class\".",value="Classify for Invoice, Contract, Certificate.\nReturn a JSON formated result containing a key called \"class\".")
+        if detailMode:
+            with st.expander("Show encoding of Prompt"):
+                st.write(f'{getEncoding(txt_prompt)}')
+            st.markdown(f'<p>Cost for input <span style="color: rgb(255, 75, 75);">${calculateInputCost(txt_prompt):.7f}</span> of {len(txt_prompt)} characters which represent {num_input_tokens} tokens.</p>', unsafe_allow_html=True)
+    
         st.subheader("Input")
-        txt_input = st.text_area(label ="What will be send to the LLM? Enter the prompt + any additional context as plain text (see example).", height=185, placeholder="Classify for Invoice, Contract, Certificate. Return a JSON formated result containing a key called \"class\".\n### \nInvoice \nInvoice Number: #12345 \nDate: January 8, 2024 \nBill And Ship To: \nName: John Smith \nAddress: 123 Main Street \nCity/State: Anytown, CA 12345 \nPhone: (555) 123-4567 \nEmail: john.smith@email.com \nDescription of Products/Services: \nDescription - Quantity - Unit Price - Total \nProduct A - 2 - $50.00 - $100.00 \nProduct B - 3 - $30.00 - $90.00 \nSubtotal: $190.00 \nShipping: $10.00 \nTax (8%): $15.20 \nTotal Amount Due: $215.20 \nPayment Details: \nPayment Method: Credit Card \nPayment Due Date: January 22, 2024 \nThank you for your business! \n", value="Classify for Invoice, Contract, Certificate. Return a JSON formated result containing a key called \"class\".\n### \nInvoice \nInvoice Number: #12345 \nDate: January 8, 2024 \nBill And Ship To: \nName: John Smith \nAddress: 123 Main Street \nCity/State: Anytown, CA 12345 \nPhone: (555) 123-4567 \nEmail: john.smith@email.com \nDescription of Products/Services: \nDescription - Quantity - Unit Price - Total \nProduct A - 2 - $50.00 - $100.00 \nProduct B - 3 - $30.00 - $90.00 \nSubtotal: $190.00 \nShipping: $10.00 \nTax (8%): $15.20 \nTotal Amount Due: $215.20 \nPayment Details: \nPayment Method: Credit Card \nPayment Due Date: January 22, 2024 \nThank you for your business! \n")
+        txt_input = st.text_area(label ="What content will be send to the LLM? Enter the Input / context as plain text (see example).", height=185, placeholder="### \nInvoice \nInvoice Number: #12345 \nDate: January 8, 2024 \nBill And Ship To: \nName: John Smith \nAddress: 123 Main Street \nCity/State: Anytown, CA 12345 \nPhone: (555) 123-4567 \nEmail: john.smith@email.com \nDescription of Products/Services: \nDescription - Quantity - Unit Price - Total \nProduct A - 2 - $50.00 - $100.00 \nProduct B - 3 - $30.00 - $90.00 \nSubtotal: $190.00 \nShipping: $10.00 \nTax (8%): $15.20 \nTotal Amount Due: $215.20 \nPayment Details: \nPayment Method: Credit Card \nPayment Due Date: January 22, 2024 \nThank you for your business! \n", value="### \nInvoice \nInvoice Number: #12345 \nDate: January 8, 2024 \nBill And Ship To: \nName: John Smith \nAddress: 123 Main Street \nCity/State: Anytown, CA 12345 \nPhone: (555) 123-4567 \nEmail: john.smith@email.com \nDescription of Products/Services: \nDescription - Quantity - Unit Price - Total \nProduct A - 2 - $50.00 - $100.00 \nProduct B - 3 - $30.00 - $90.00 \nSubtotal: $190.00 \nShipping: $10.00 \nTax (8%): $15.20 \nTotal Amount Due: $215.20 \nPayment Details: \nPayment Method: Credit Card \nPayment Due Date: January 22, 2024 \nThank you for your business! \n")
         
         if detailMode:
             with st.expander("Show encoding of Input"):
                 st.write(f'{getEncoding(txt_input)}')
             st.markdown(f'<p>Cost for input <span style="color: rgb(255, 75, 75);">${calculateInputCost(txt_input):.7f}</span> of {len(txt_input)} characters which represent {num_input_tokens} tokens.</p>', unsafe_allow_html=True)
-            
-    with col2:
+        
         st.subheader("Output")
         txt_output = st.text_area(label="What will be the expected answer of the LLM? Enter it as plain text. See example: a JSON result containing key + value.", placeholder="{\n\"class\": \"Invoice\"\n}", value="{\n\"class\": \"Invoice\"\n}")
         
         if detailMode:
             with st.expander("Show encoding of Ouput"):
                 st.write(f'{getEncoding(txt_output)}')
-            st.markdown(f'<p style="text-align:right";>Cost for output <span style="color: rgb(255, 75, 75);">${calculateOutputCost(txt_output):.7f}</span> of {len(txt_output)} characters which represent {num_output_tokens} tokens.</p>', unsafe_allow_html=True)
-
-    total = calculateTotalCost(calculateInputCost(txt_input), calculateOutputCost(txt_output))
-    totaltokens = num_input_tokens + num_output_tokens
-    st.markdown(f'<p style="text-align:center; font-weight: bold;"><span style="color: rgb(255, 75, 75); font-size: 24px">${total:.7f}</span></p>', unsafe_allow_html=True)
-    st.write(f'<p style="text-align:center;">are the total costs for 1 query with {totaltokens} tokens when using <span style="color: rgb(255, 75, 75);">{model_choice}.</span></p>', unsafe_allow_html=True)
+            st.markdown(f'<p>Cost for output <span style="color: rgb(255, 75, 75);">${calculateOutputCost(txt_output):.7f}</span> of {len(txt_output)} characters which represent {num_output_tokens} tokens.</p>', unsafe_allow_html=True)
     
+    
+    # calcs
+    total = calculateTotalCost(calculateInputCost(txt_prompt), calculateInputCost(txt_input), calculateOutputCost(txt_output))
+    totaltokens = num_input_tokens + num_output_tokens + len(encoding.encode(txt_prompt))
+
+    prompt_prozent = calculateInputCost(txt_prompt) / total * 100
+    input_prozent = calculateInputCost(txt_input) / total * 100
+    output_prozent = calculateOutputCost(txt_output) / total * 100
+    onehundreddollar = 100/total
+
+    with col2:
+        st.subheader("Result")
+        st.write(f'<p>The total costs for 1 query with {totaltokens} tokens when using <span style="color: rgb(255, 75, 75);">{model_choice}</span> are: </p>', unsafe_allow_html=True)
+        st.markdown(f'<p style="text-align:center; font-weight: bold;"><span style="color: rgb(255, 75, 75); font-size: 32px">${total:.7f}</span></p>', unsafe_allow_html=True)
+        if detailMode:
+            st.write(f'<p style="text-align:center;">Costs are distributed as following:</p>', unsafe_allow_html=True)
+            st.write(f'<p style="text-align:center;">Prompt: <span style="color: rgb(255, 75, 75);">{prompt_prozent:.2f}%</span></p>', unsafe_allow_html=True)
+            st.write(f'<p style="text-align:center;">Input: <span style="color: rgb(255, 75, 75);">{input_prozent:.2f}%</span></p>', unsafe_allow_html=True)
+            st.write(f'<p style="text-align:center;">Output: <span style="color: rgb(255, 75, 75);">{output_prozent:.2f}%</span></p>', unsafe_allow_html=True)
+        st.subheader("100$")
+        st.markdown(f'<p>A budget of 100$ would suffice for: <span style="color: rgb(255, 75, 75);">{onehundreddollar:.0f} such queries</span></p>', unsafe_allow_html=True)
+        st.subheader("Based on your budget")
+        your_budget = st.number_input('Insert your budget in $',value=2000)
+        result_your_budget = your_budget/total
+        daily_queries_based_on_your_budget = result_your_budget / 250
+        st.markdown(f'<p>Would result in: <span style="color: rgb(255, 75, 75);">{result_your_budget:.0f} such queries</span></p>', unsafe_allow_html=True)
+        st.write(f'<p>If <span style="color: rgb(255, 75, 75);">{your_budget:.0f} $</span> is your <span style="color: rgb(255, 75, 75);">yearly</span> budget this would enable you to do <span style="color: rgb(255, 75, 75);">{daily_queries_based_on_your_budget:.0f} queries per day</span> when using <span style="color: rgb(255, 75, 75);">{model_choice}</span>.</p>', unsafe_allow_html=True)
+        st.write("Based on 250 working days as well as Prompt + Input + Output.")
+
     st.divider()
     st.subheader("How much would 20 000 queries be? 🤔")
     values = st.slider(
@@ -184,64 +211,64 @@ with tab1:
    
     st.divider()
     
-    col5, col6 = st.columns(2)
+    col5, col6, col7 = st.columns(3)
+    col51, col52, col61, col62, col71, col72 = st.columns(6)
 
     with col5: 
-        st.subheader("Vary the Input.")
-        values_input = st.slider(
-        'Use the slider to vary the Input amount. For example 0.50 means half of the original Input.',
-        0.1, 5.0, (1.0), step=0.1)
-        
-    #st.write(f'<p>If your Input varies between <span style="color: rgb(255, 75, 75)">{values_input}</span> times and <span style="color: rgb(255, 75, 75)">{values_input}</span> times your costs for <span style="color: rgb(255, 75, 75)"> {values[0]}</span> queries would be between <span style="color: rgb(255, 75, 75)">${sliderInputMultiplier:.2f}</span> and <span style="color: rgb(255, 75, 75)">${sliderInputMultiplier:.2f}</span> when using <span style="color: rgb(255, 75, 75)">{model_choice}</span>.</p>', unsafe_allow_html=True)
-    #st.write(f'<p>If your Input varies between <span style="color: rgb(255, 75, 75)">{values_input[0]}</span> times and <span style="color: rgb(255, 75, 75)">{values_input[1]}</span> times your costs for <span style="color: rgb(255, 75, 75)"> {values[1]}</span> queries would be between <span style="color: rgb(255, 75, 75)">${maxInputTotal1:.2f}</span> and <span style="color: rgb(255, 75, 75)">${maxInputTotal2:.2f}</span> when using <span style="color: rgb(255, 75, 75)">{model_choice}</span>.</p>', unsafe_allow_html=True)
+        st.subheader("Vary the Prompt Tokens.")
+        with col51:
+            min_number_prompt = st.number_input('Insert min Prompt Tokens', value=100)
+            min_single_result_prompt = min_number_prompt * modelInputCost / 1000
+            min_multiple_result_prompt = min_number_prompt * modelInputCost / 1000 * values[0]
+            st.markdown(f'<p><span style="color: rgb(255, 75, 75);">{min_number_prompt:.0f} Prompt Tokens</span> would cost for 1 query <span style="color: rgb(255, 75, 75);">{min_single_result_prompt:.7f}$ </span> and <span style="color: rgb(255, 75, 75);">{min_multiple_result_prompt:.2f}$</span> for <span style="color: rgb(255, 75, 75);">{values[0]} queries</span>.</p>', unsafe_allow_html=True)
+        with col52:
+            max_number_prompt = st.number_input('Insert max Prompt Tokens', value=250)
+            max_single_result_prompt = max_number_prompt * modelInputCost / 1000
+            max_multiple_result_prompt = max_number_prompt * modelInputCost / 1000 * values[1]
+            st.markdown(f'<p><span style="color: rgb(255, 75, 75);">{max_number_prompt:.0f} Prompt Tokens</span> would cost for 1 query <span style="color: rgb(255, 75, 75);">{max_single_result_prompt:.7f}$ </span> and <span style="color: rgb(255, 75, 75);">{max_multiple_result_prompt:.2f}$</span> for <span style="color: rgb(255, 75, 75);">{values[1]} queries</span>.</p>', unsafe_allow_html=True)
+
     with col6:
-        st.subheader("Vary the Output.")
-        values_output = st.slider(
-        'Use the slider to vary the Output amount. For example 2 means doubling the original output.',
-        0.1, 5.0, (1.0), step=0.1)
+        st.subheader("Vary the Input Tokens.")
+        with col61:
+            min_number_input = st.number_input('Insert min Input Tokens', value=500)
+            min_single_result_input = min_number_input * modelInputCost / 1000
+            min_multiple_result_input = min_number_input * modelInputCost / 1000 * values[0]
+            st.markdown(f'<p><span style="color: rgb(255, 75, 75);">{min_number_input:.0f} Prompt Tokens</span> would cost for 1 query <span style="color: rgb(255, 75, 75);">{min_single_result_input:.7f}$ </span> and <span style="color: rgb(255, 75, 75);">{min_multiple_result_input:.2f}$</span> for <span style="color: rgb(255, 75, 75);">{values[0]} queries</span>.</p>', unsafe_allow_html=True)
+        with col62:
+            max_number_input = st.number_input('Insert max Input Tokens', value=800)
+            max_single_result_input = max_number_input * modelInputCost / 1000
+            max_multiple_result_input = max_number_input * modelInputCost / 1000 * values[1]
+            st.markdown(f'<p><span style="color: rgb(255, 75, 75);">{max_number_input:.0f} Prompt Tokens</span> would cost for 1 query <span style="color: rgb(255, 75, 75);">{max_single_result_input:.7f}$ </span> and <span style="color: rgb(255, 75, 75);">{max_multiple_result_input:.2f}$</span> for <span style="color: rgb(255, 75, 75);">{values[1]} queries</span>.</p>', unsafe_allow_html=True)
+       
         
+    with col7:
+        st.subheader("Vary the Output Tokens.")
+        with col71:
+            min_number_output = st.number_input('Insert min Output Tokens', value=50)
+            min_single_result_output = min_number_output * modelOutputCost / 1000
+            min_multiple_result_output = min_number_output * modelOutputCost / 1000 * values[0]
+            st.markdown(f'<p><span style="color: rgb(255, 75, 75);">{min_number_output:.0f} Prompt Tokens</span> would cost for 1 query <span style="color: rgb(255, 75, 75);">{min_single_result_output:.7f}$ </span> and <span style="color: rgb(255, 75, 75);">{min_multiple_result_output:.2f}$</span> for <span style="color: rgb(255, 75, 75);">{values[0]} queries</span>.</p>', unsafe_allow_html=True)
+      
+        with col72:
+            max_number_output = st.number_input('Insert max Output Tokens', value=150)
+            max_single_result_output = max_number_output * modelOutputCost / 1000
+            max_multiple_result_output = max_number_output * modelOutputCost / 1000 * values[1]
+            st.markdown(f'<p><span style="color: rgb(255, 75, 75);">{max_number_output:.0f} Prompt Tokens</span> would cost for 1 query <span style="color: rgb(255, 75, 75);">{max_single_result_output:.7f}$ </span> and <span style="color: rgb(255, 75, 75);">{max_multiple_result_output:.2f}$</span> for <span style="color: rgb(255, 75, 75);">{values[1]} queries</span>.</p>', unsafe_allow_html=True)
+#calcs
+min_total_result = min_single_result_prompt + min_single_result_input + min_single_result_output
+max_total_result = max_single_result_prompt + max_single_result_input + max_single_result_output
 
-    # calcs
-    sliderInputCost = inputCost * values_input
-    sliderOutputCost = outputCost * values_output
-    sliderTotal = calculateTotalCost(sliderInputCost, sliderOutputCost)
-
-    sliderTotalMin = sliderTotal * values[0]
-    sliderTotalMax = sliderTotal * values[1]
-
-    shareOfInputCostMin = sliderInputCost * values[0]
-    shareOfInputCostMax = sliderInputCost * values[1]
-    shareOfOutputCostMin = sliderOutputCost * values[0]
-    shareOfOutputCostMax = sliderOutputCost * values[1]
-
-    percentInputTotal = sliderInputCost/sliderTotal * 100
-    percentOutputTotal = sliderOutputCost/sliderTotal * 100
-
-    with col5:
-        st.write(f'<p>The cost for <span style="color: rgb(255, 75, 75)">{values_input}</span> times the input is <span style="color: rgb(255, 75, 75)">${sliderInputCost:.7f}</span></p>', unsafe_allow_html=True)
-        st.write(f'<p>Input cost for <span style="color: rgb(255, 75, 75)">{values[0]}</span> queries: <span style="color: rgb(255, 75, 75)">${shareOfInputCostMin:.2f}</span></p>', unsafe_allow_html=True)
-        st.write(f'<p>Input cost for <span style="color: rgb(255, 75, 75)">{values[1]}</span> queries: <span style="color: rgb(255, 75, 75)">${shareOfInputCostMax:.2f}</span></p>', unsafe_allow_html=True)
-        st.write(f'<p>Input cost account for <span style="color: rgb(255, 75, 75)">{percentInputTotal:.2f}%</span> of the total costs.</p>', unsafe_allow_html=True)
-
-    
-    with col6:
-        st.markdown(f'<p style="text-align:right;">The cost for <span style="color: rgb(255, 75, 75)">{values_output}</span> times the output is <span style="color: rgb(255, 75, 75)">${sliderOutputCost:.7f}</span></p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="text-align:right;">Output cost for <span style="color: rgb(255, 75, 75)">{values[0]}</span> queries: <span style="color: rgb(255, 75, 75)">${shareOfOutputCostMin:.2f}</span></p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="text-align:right;">Output cost for <span style="color: rgb(255, 75, 75)">{values[1]}</span> queries: <span style="color: rgb(255, 75, 75)">${shareOfOutputCostMax:.2f}</span></p>', unsafe_allow_html=True)
-        st.markdown(f'<p style="text-align:right;">Output cost account for <span style="color: rgb(255, 75, 75)">{percentOutputTotal:.2f}%</span> of the total costs.</p>', unsafe_allow_html=True)
-
-    st.markdown(f'<p style="text-align:center; font-weight: bold;"><span style="color: rgb(255, 75, 75); font-size: 24px">${sliderTotalMin:.2f} - ${sliderTotalMax:.2f}</span></p>', unsafe_allow_html=True)
-    st.write(f'<p style="text-align:center;">are the costs for <span style="color: rgb(255, 75, 75)"> {values[0]} - {values[1]}</span> queries with the updated values when using <span style="color: rgb(255, 75, 75);">{model_choice}.</span></p>', unsafe_allow_html=True)
-    st.write(f'<p style="text-align:center;">1 query with the updated values would be <span style="color: rgb(255, 75, 75)">${sliderTotal:.7f}</span></p>', unsafe_allow_html=True)
-    
-
-
-    #st.write(f'<p>If your Input varies between <span style="color: rgb(255, 75, 75)">{values_input[0]}</span> times and <span style="color: rgb(255, 75, 75)">{values_input[1]}</span> times your costs for <span style="color: rgb(255, 75, 75)"> {values[0]}</span> queries would be between <span style="color: rgb(255, 75, 75)">${minInputTotal1:.2f}</span> and <span style="color: rgb(255, 75, 75)">${minInputTotal2:.2f}</span> when using <span style="color: rgb(255, 75, 75)">{model_choice}</span>.</p>', unsafe_allow_html=True)
-    #st.write(f'<p>If your Input varies between <span style="color: rgb(255, 75, 75)">{values_input[0]}</span> times and <span style="color: rgb(255, 75, 75)">{values_input[1]}</span> times your costs for <span style="color: rgb(255, 75, 75)"> {values[1]}</span> queries would be between <span style="color: rgb(255, 75, 75)">${maxInputTotal1:.2f}</span> and <span style="color: rgb(255, 75, 75)">${maxInputTotal2:.2f}</span> when using <span style="color: rgb(255, 75, 75)">{model_choice}</span>.</p>', unsafe_allow_html=True)
-
-
+min_multiple_total_result = min_multiple_result_prompt + min_multiple_result_input + min_multiple_result_output
+max_multiple_total_result = max_multiple_result_prompt + max_multiple_result_input + max_multiple_result_output
+                  
+st.markdown(f'<p style="text-align:center; font-weight: bold;"><span style="color: rgb(255, 75, 75); font-size: 24px">${min_total_result:.7f} - ${max_total_result:.7f}</span></p>', unsafe_allow_html=True)
+st.write(f'<p style="text-align:center;">are the min & max costs for 1 query based on your settings when using <span style="color: rgb(255, 75, 75);">{model_choice}.</span></p>', unsafe_allow_html=True)
+st.markdown(f'<p style="text-align:center; font-weight: bold;"><span style="color: rgb(255, 75, 75); font-size: 24px">${min_multiple_total_result:.2f} - ${max_multiple_total_result:.2f}</span></p>', unsafe_allow_html=True)
+st.write(f'<p style="text-align:center;">are the costs for <span style="color: rgb(255, 75, 75)"> {values[0]} - {values[1]}</span> queries based on your settings when using <span style="color: rgb(255, 75, 75);">{model_choice}.</span></p>', unsafe_allow_html=True)
+        
 with tab2:
     st.write("Welcome to advanced mode")
+    
 
 
 # Day 1:
@@ -289,9 +316,16 @@ with tab2:
 
 # Day 7
 # slider was a bad idea .. make input fields
-# add information page about tokens (4 characters are one token etc.)
 # make it more relateable - add something like: for 100$ you could do X amount of calls
+# added a specific prompt field
+# rebuild some of the columns
+
+# Day 8
+# add information page about tokens (4 characters are one token etc.)
+# think about explanations
+# hide everything for detail mode
 # think about theming (color scheme)
 #
 #
 # publish.
+    
