@@ -23,6 +23,8 @@ streamlit run main.py
 The Tool does not actually send any Prompts or generates Output from a LLM. You need to feed it with your examples. ChatGPT is a good place to get started. I encourage you to think about your Prompt, the context you give the prompt and the desired output you are expecting from the LLM.
 The Token Cost Calculator will give you the total costs for your query.
 
+![NormalMode.png](NormalMode.png "User Interface")
+
 If you activate "Detail Mode" in the sidepanel/menu it also gives you the option to:
 - see what are the costs assigned to each part of your query
 - see the cost distribution in percent
@@ -30,6 +32,8 @@ If you activate "Detail Mode" in the sidepanel/menu it also gives you the option
 - see how many queries you could do with 100$
 - see how much it would cost to do 500 or even 100.000 queries
 - freely adjust the amount of Prompt, Input and Output tokens
+
+![DetailMode.png](DetailMode.png "User Interface Detail Mode")
 
 ### How this app got build
 Day 1:
