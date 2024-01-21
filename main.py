@@ -138,7 +138,7 @@ st.markdown(f'<p>The costs per 1000 Tokens based on <span style="color: rgb(255,
 col1, col2 = st.columns(2)
 with col1:
     st.subheader("Prompt")
-    txt_prompt = st.text_area(label ="What is the task? Enter the prompt (see example).", placeholder="Classify for Invoice, Contract, Certificate.\nReturn a JSON formated result containing a key called \"class\".",value="Classify for Invoice, Contract, Certificate.\nReturn a JSON formated result containing a key called \"class\".")
+    txt_prompt = st.text_area(label ="What is the task? Enter the prompt (see example).", placeholder="Classify for Invoice, Contract, Certificate.\nReturn a JSON formatted result containing a key called \"class\".",value="Classify for Invoice, Contract, Certificate.\nReturn a JSON formatted result containing a key called \"class\".")
     if detailMode:
         with st.expander("Show encoding of Prompt"):
             st.write(f'{getEncoding(txt_prompt)}')
