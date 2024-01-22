@@ -207,8 +207,11 @@ if detailMode:
         your_budget = st.number_input('Insert your budget in $',value=2000)
         result_your_budget = your_budget/total
         daily_queries_based_on_your_budget = result_your_budget / 250
+        cost_per_day = your_budget/250
+        
         st.markdown(f'<p>Would result in: <span style="color: rgb(255, 75, 75);">{result_your_budget:.0f} such queries</span></p>', unsafe_allow_html=True)
         st.write(f'<p>If <span style="color: rgb(255, 75, 75);">{your_budget:.0f} $</span> is your <span style="color: rgb(255, 75, 75);">yearly</span> budget this would enable you to do <span style="color: rgb(255, 75, 75);">{daily_queries_based_on_your_budget:.0f} queries per day</span> when using <span style="color: rgb(255, 75, 75);">{model_choice}</span>.</p>', unsafe_allow_html=True)
+        st.write(f'<p>Cost per day would be <span style="color: rgb(255, 75, 75);">{cost_per_day:.0f} $</span>.</p>', unsafe_allow_html=True)
         st.write("Based on 250 working days and Prompt + Input + Output.")
 
 
