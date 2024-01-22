@@ -280,6 +280,7 @@ if detailMode:
             max_multiple_result_output = max_number_output * modelOutputCost / 1000 * values[1]
             st.markdown(f'<p><span style="color: rgb(255, 75, 75);">{max_number_output:.0f} Prompt Tokens</span> would cost for 1 query <span style="color: rgb(255, 75, 75);">{max_single_result_output:.7f}$ </span> and <span style="color: rgb(255, 75, 75);">{max_multiple_result_output:.2f}$</span> for <span style="color: rgb(255, 75, 75);">{values[1]} queries</span>.</p>', unsafe_allow_html=True)
     #calcs
+    # minimum and maximum for single query
     min_total_result = min_single_result_prompt + min_single_result_input + min_single_result_output
     max_total_result = max_single_result_prompt + max_single_result_input + max_single_result_output
 
@@ -294,9 +295,15 @@ if detailMode:
 
     max_prompt_input_prozent = ((max_number_prompt+max_number_input) * modelInputCost / 1000 ) / (max_tokens_num * modelInputCost / 1000) * 100
     max_output_prozent = ((max_number_output) * modelOutputCost / 1000 ) / (max_tokens_num * modelOutputCost / 1000) * 100
+    # mean calculation:
 
+    placeholder1 = max_multiple_total_result / values[1]*values[0]
+    placeholder2 = min_multiple_total_result / values[0]*values[1]
+    mean_cost = (placeholder1 + placeholder2 + max_multiple_total_result + min_multiple_total_result)/4
+    
     st.markdown(f'<p style="text-align:center; font-weight: bold;"><span style="color: rgb(255, 75, 75); font-size: 24px">${min_total_result:.7f} - ${max_total_result:.7f}</span></p>', unsafe_allow_html=True)
     st.write(f'<p style="text-align:center;">are the min & max costs for 1 query based on min <span style="color: rgb(255, 75, 75);">{min_tokens_num}</span> total tokens ({min_number_prompt}+{min_number_input}+{min_number_output}) with the following cost distribution in percent for the Input (Prompt + Input): <span style="color: rgb(255, 75, 75);">{min_prompt_input_prozent:.2f}%</span> and for Output: <span style="color: rgb(255, 75, 75);">{min_output_prozent:.2f}%</span> and max <span style="color: rgb(255, 75, 75);">{max_tokens_num}</span> total tokens ({max_number_prompt}+{max_number_input}+{max_number_output}) with the following cost distribution in percent for the Input (Prompt + Input): <span style="color: rgb(255, 75, 75);">{max_prompt_input_prozent:.2f}%</span> and for Output: <span style="color: rgb(255, 75, 75);">{max_output_prozent:.2f}%</span> when using <span style="color: rgb(255, 75, 75);">{model_choice}.</span></p>', unsafe_allow_html=True)
     st.markdown(f'<p style="text-align:center; font-weight: bold;"><span style="color: rgb(255, 75, 75); font-size: 24px">${min_multiple_total_result:.2f} - ${max_multiple_total_result:.2f}</span></p>', unsafe_allow_html=True)
     st.write(f'<p style="text-align:center;">are the costs for <span style="color: rgb(255, 75, 75)"> {values[0]} - {values[1]}</span> queries based on your settings when using <span style="color: rgb(255, 75, 75);">{model_choice}.</span></p>', unsafe_allow_html=True)
+    st.write(f'<p style="text-align:center;">Average cost would be (mean) <span style="color: rgb(255, 75, 75)"> {mean_cost:.2f}$</span> based on (minimum total costs * max queries + minimum total costs * min queries + maximum total costs * max queries + maximum total costs * min queries) / 4</span></p>', unsafe_allow_html=True)
     
