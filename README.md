@@ -5,6 +5,9 @@ Ever wondered:
 - how the costs of a query are split up and where to optimize first?
 - how many queries you could do with 100$
 - what the costs would be if you do 20.000 classifications with a Language Model?
+  
+### Use it for free here
+[Token Cost Calculator](https://tokencostcalculator.streamlit.app/)
 
 ## Quick Install
 with pip:
