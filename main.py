@@ -26,13 +26,16 @@ def setModelCost(model_choice):
     if model_choice == "gpt-3.5-turbo-1106":
         modelInputCost = 0.001 
         modelOutputCost = 0.002
+    elif model_choice =="gpt-3.5-turbo-0125":
+        modelInputCost = 0.0005
+        modelOutputCost = 0.0015
     elif model_choice == "gpt-4":
         modelInputCost = 0.03
         modelOutputCost = 0.06
     elif model_choice == "gpt-4-32k":
         modelInputCost = 0.06
         modelOutputCost = 0.12
-    elif model_choice == "gpt-4-1106-preview":
+    elif model_choice == "gpt-4-0125-preview":
         modelInputCost = 0.01
         modelOutputCost = 0.03
             
@@ -53,10 +56,13 @@ def calculateEverythingForBarChart(model_choice, text_input, text_output):
         modelInputCost = 0.06
         modelOutputCost = 0.12
         cost = calculateTotalCost(calculateInputCost(text_input), calculateOutputCost(text_output))
-    elif model_choice == "gpt-4-1106-preview":
+    elif model_choice == "gpt-4-0125-preview":
         modelInputCost = 0.01
         modelOutputCost = 0.03
         cost = calculateTotalCost(calculateInputCost(text_input), calculateOutputCost(text_output))
+    elif model_choice =="gpt-3.5-turbo-0125":
+        modelInputCost = 0.0005
+        modelOutputCost = 0.0015
             
     return "%0.7f" % cost
 
@@ -113,7 +119,7 @@ st.sidebar.markdown("3. **Output:** Expected LLM response.")
 st.sidebar.write("This app will NOT perform an actual request. You need to enter your content in every field. You could copy paste Prompt, Input and Output from chatGPT for example.")
 st.sidebar.divider()
 st.sidebar.header("📊 Configuration")
-model_choice = st.sidebar.radio("Which model do you want to use?", ["gpt-3.5-turbo-1106", "gpt-4", "gpt-4-32k", "gpt-4-1106-preview"])
+model_choice = st.sidebar.radio("Which model do you want to use?", ["gpt-3.5-turbo-0125", "gpt-3.5-turbo-1106", "gpt-4", "gpt-4-32k", "gpt-4-0125-preview"])
 st.sidebar.divider()
 st.sidebar.subheader("🤓 Detail Mode")
 st.sidebar.write("If you are interessted in the encodings, number of tokens, number of characters, individual costs and simply more options activate the folowing:")
